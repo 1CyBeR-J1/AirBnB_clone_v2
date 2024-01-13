@@ -26,12 +26,9 @@ def do_pack():
     local("mkdir -p versions")
 
     # extract the contents of a tar archive
-    result = local("tar -czf versions/web_static_{}.tgz web_static"
+    result = local("tar -czvf versions/web_static_{}.tgz web_static"
                    .format(now))
     if result.failed:
         return None
     else:
         return result
-
-if __name__ == "__main__":
-    do_pack()
