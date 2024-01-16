@@ -9,7 +9,7 @@ from fabric.operations import run, put
 from datetime import datetime
 
 
-env.hosts = ['3.227.217.150', '3.95.27.202']
+env.hosts = ['100.26.174.69', '18.207.141.110']
 env.user = "ubuntu"
 
 
@@ -94,27 +94,27 @@ def do_deploy(archive_path):
         put(archive_path, "/tmp/{}".format(file_name))
 
         # Create new directory for release
-        run("mkdir -p {}".format(folder_path))
+        run("sudo mkdir -p {}".format(folder_path))
 
         # Untar archive
-        run("tar -xzf /tmp/{} -C {}".format(file_name, folder_path))
+        run("sudo tar -xzf /tmp/{} -C {}".format(file_name, folder_path))
 
         # Delete the archive from the web server
-        run("rm -rf /tmp/{}".format(file_name))
+        run("sudo rm -rf /tmp/{}".format(file_name))
 
         # Move extraction to proper directory
-        run("mv {}web_static/* {}".format(folder_path, folder_path))
+        run("sudo mv {}web_static/* {}".format(folder_path, folder_path))
 
         # Delete first copy of extraction after move
-        run("rm -rf {}web_static".format(folder_path))
+        run("sudo rm -rf {}web_static".format(folder_path))
 
         # Delete the symbolic link /data/web_static/current from the web server
-        run("rm -rf /data/web_static/current")
+        run("sudo rm -rf /data/web_static/current")
 
         # Create new the symbolic link /data/web_static/current on web server,
         # linked to the new version of your code,
         # (/data/web_static/releases/<archive filename without extension>
-        run("ln -s {} /data/web_static/current".format(folder_path))
+        run("sudo ln -s {} /data/web_static/current".format(folder_path))
 
         print('New version deployed!')
         success = True
@@ -153,10 +153,10 @@ def do_clean(number=0):
     for archive in archives:
         os.unlink('versions/{}'.format(archive))
     cmd_parts = [
-        "rm -rf $(",
+        "sudo rm -rf $(",
         "find {}/ -maxdepth 1 -type d -iregex",
         " '{}/web_static_.*'",
         " | sort -r | tr '\\n' ' ' | cut -d ' ' -f{}-)"
         .format(path, path, start + 1)
     ]
-    run(''.join(cmd_parts))
+    sudo run(''.join(cmd_parts))
